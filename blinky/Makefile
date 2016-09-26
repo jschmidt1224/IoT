@@ -22,13 +22,13 @@ TOOLS_DIR=tools
 #############################################################################
 CFLAGS = -ggdb3 -Og -Wall -W -Wextra
 CFLAGS += -I$(INCLUDE_DIR)
-CFLAGS += -mcpu=cortex-m0 -mthumb -ffunction-sections -fdata-sections
-CFLAGS += -mlittle-endian -DSTM32F072xB
+CFLAGS += -mcpu=cortex-m4 -mthumb -ffunction-sections -fdata-sections
+CFLAGS += -mlittle-endian -DSTM32F407xx
 CFLAGS += -Werror -Wendif-labels
 
 LINKER_SCRIPT = linker_script.ld
 LDFLAGS = -T $(LINKER_SCRIPT)
-LDFLAGS += -nostartfiles -Wl,--gc-sections
+LDFLAGS += -Wl,--gc-sections
 
 MAKEFLAGS += --no-builtin-rules
 
