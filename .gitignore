@@ -30,6 +30,7 @@
 *.bin
 *.map
 *.md5
+*.lst
 
 # Autodep Files
 *.d
