@@ -49,9 +49,20 @@ Finally to build and flash
 You will want 2 terminal windows to build and flash with ease
 In the first run the openocd.sh script in the tools folder
 This will ask for your sudo password to allow access to the USB
+If you installed OpenOCD in a different location you will need to change the
+__OPENOCD_PATH variable in the script
 
 In the second run the envsetup.sh script but be sure to use
 . envsetup.sh
 and not
 ./envsetup.sh
 because ./ will not actually export to the PATH environment variable
+
+Next simply run
+make
+make flash
+
+This should erase anything already on the board and install an infinite while
+loop that does nothing
+
+Congratulations you just programed the STM32F4-Discovery!
