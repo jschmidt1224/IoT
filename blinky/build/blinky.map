@@ -71,6 +71,7 @@ Discarded input sections
                 0x00000000       0x10 build/src/system_stm32f4xx.o
  .data.SystemCoreClock
                 0x00000000        0x4 build/src/system_stm32f4xx.o
+ .debug_macro   0x00000000      0x87a build/src/system_stm32f4xx.o
  .debug_macro   0x00000000       0x28 build/src/system_stm32f4xx.o
  .debug_macro   0x00000000       0x22 build/src/system_stm32f4xx.o
  .debug_macro   0x00000000       0x87 build/src/system_stm32f4xx.o
@@ -465,7 +466,7 @@ OUTPUT(build/blinky.elf elf32-littlearm)
  .debug_ranges  0x00000018       0x18 build/src/system_stm32f4xx.o
  .debug_ranges  0x00000030       0x20 build/src/startup_stm32f407xx.o
 
-.debug_macro    0x00000000     0xba67
+.debug_macro    0x00000000     0xb1ed
  .debug_macro   0x00000000       0xb5 build/src/main.o
  .debug_macro   0x000000b5      0x87a build/src/main.o
  .debug_macro   0x0000092f       0x22 build/src/main.o
@@ -480,20 +481,19 @@ OUTPUT(build/blinky.elf elf32-littlearm)
  .debug_macro   0x00000e09      0xe66 build/src/main.o
  .debug_macro   0x00001c6f     0x93f9 build/src/main.o
  .debug_macro   0x0000b068       0xdc build/src/system_stm32f4xx.o
- .debug_macro   0x0000b144      0x87a build/src/system_stm32f4xx.o
- .debug_macro   0x0000b9be       0x31 build/src/system_stm32f4xx.o
- .debug_macro   0x0000b9ef       0x35 build/src/system_stm32f4xx.o
- .debug_macro   0x0000ba24       0x43 build/src/system_stm32f4xx.o
+ .debug_macro   0x0000b144       0x31 build/src/system_stm32f4xx.o
+ .debug_macro   0x0000b175       0x35 build/src/system_stm32f4xx.o
+ .debug_macro   0x0000b1aa       0x43 build/src/system_stm32f4xx.o
 
 .debug_line     0x00000000      0x51c
  .debug_line    0x00000000      0x243 build/src/main.o
  .debug_line    0x00000243      0x261 build/src/system_stm32f4xx.o
  .debug_line    0x000004a4       0x78 build/src/startup_stm32f407xx.o
 
-.debug_str      0x00000000    0x30b16
+.debug_str      0x00000000    0x30b08
  .debug_str     0x00000000    0x305f8 build/src/main.o
                               0x30764 (size before relaxing)
- .debug_str     0x000305f8      0x51e build/src/system_stm32f4xx.o
+ .debug_str     0x000305f8      0x510 build/src/system_stm32f4xx.o
                               0x30c63 (size before relaxing)
 
 .comment        0x00000000       0x6e
