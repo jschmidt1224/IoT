@@ -1,6 +1,15 @@
 #include <stdint.h>
 #include "stm32f407xx.h"
 
+void EXTI0_IRQHandler(uint16_t a)
+{
+  a = 1;
+  GPIOD->BSRR = GPIO_BSRR_BS_12;
+  while(a) {
+
+  }
+}
+
 void led_init()
 {
   //Enables the clock going to the GPIO D peripheral
@@ -20,28 +29,27 @@ void led_init()
   GPIOD->BSRR = GPIO_BSRR_BS_14 | GPIO_BSRR_BS_15;
 }
 
+void button_init()
+{
+  RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+  GPIOA->MODER &= ~GPIO_MODER_MODER0;
+  GPIOA->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR0;
+  GPIOA->PUPDR &= ~GPIO_PUPDR_PUPDR0;
+}
+
+void exti_init()
+{
+  RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
+  SYSCFG->EXTICR[0] &= ~SYSCFG_EXTICR1_EXTI0;
+  EXTI->RTSR |= EXTI_RTSR_TR6;
+  EXTI->IMR |= EXTI_IMR_MR6;
+}
+
 void led_update(uint8_t n)
 {
-  if (n & 0x01) {
-    GPIOD->BSRR = GPIO_BSRR_BS_12;
-  } else {
-    GPIOD->BSRR = GPIO_BSRR_BR_12;
-  }
-  if (n & 0x02) {
-    GPIOD->BSRR = GPIO_BSRR_BS_13;
-  } else {
-    GPIOD->BSRR = GPIO_BSRR_BR_13;
-  }
-  if (n & 0x04) {
-    GPIOD->BSRR = GPIO_BSRR_BS_14;
-  } else {
-    GPIOD->BSRR = GPIO_BSRR_BR_14;
-  }
-  if (n & 0x08) {
-    GPIOD->BSRR = GPIO_BSRR_BS_15;
-  } else {
-    GPIOD->BSRR = GPIO_BSRR_BR_15;
-  }
+  uint32_t BS = (n << 12) & (0xE000);
+  uint32_t BR = ((~n << 28) & (0xE0000000));
+  GPIOD->BSRR = BS | BR;
 }
 
 void delay()
@@ -50,7 +58,7 @@ void delay()
     uint32_t i;
 
     counter = 0;
-    for(i = 0; i < 0xFFFFF; i++) {
+    for(i = 0; i < 0xFFFF; i++) {
         counter = i;
         counter = counter;
     }
@@ -60,11 +68,17 @@ int main()
 {
     uint8_t counter = 0;
     led_init();
+    button_init();
+    exti_init();
+    GPIOD->BSRR = GPIO_BSRR_BR_12;
     led_update(counter);
     while(1) {
         delay();
         counter += 1;
         led_update(counter);
+        if (counter > 50) {
+          EXTI->SWIER |= EXTI_SWIER_SWIER6;
+        }
     }
 
     return 0;
