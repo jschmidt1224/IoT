@@ -1,14 +1,9 @@
 #include <stdint.h>
 #include "stm32f407xx.h"
 
-void EXTI0_IRQHandler(uint16_t a)
-{
-  a = 1;
-  GPIOD->BSRR = GPIO_BSRR_BS_12;
-  while(a) {
+uint8_t counter = 0;
 
-  }
-}
+
 
 void led_init()
 {
@@ -41,14 +36,15 @@ void exti_init()
 {
   RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
   SYSCFG->EXTICR[0] &= ~SYSCFG_EXTICR1_EXTI0;
-  EXTI->RTSR |= EXTI_RTSR_TR6;
-  EXTI->IMR |= EXTI_IMR_MR6;
+  EXTI->RTSR |= EXTI_RTSR_TR0;
+  EXTI->IMR |= EXTI_IMR_MR0;
+  NVIC_EnableIRQ(EXTI0_IRQn);
 }
 
 void led_update(uint8_t n)
 {
-  uint32_t BS = (n << 12) & (0xE000);
-  uint32_t BR = ((~n << 28) & (0xE0000000));
+  uint32_t BS = (n << 12) & (0xF000);
+  uint32_t BR = ((~n << 28) & (0xF0000000));
   GPIOD->BSRR = BS | BR;
 }
 
@@ -64,21 +60,29 @@ void delay()
     }
 }
 
+int EXTI0_IRQHandler()
+{
+  //GPIOD->BSRR = GPIO_BSRR_BS_12;
+  counter++;
+  NVIC_ClearPendingIRQ(EXTI0_IRQn);
+  EXTI->PR|=(1<<0);
+  NVIC_DisableIRQ(EXTI0_IRQn);
+  delay();
+  NVIC_EnableIRQ(EXTI0_IRQn);
+  return 0;
+}
+
 int main()
 {
-    uint8_t counter = 0;
     led_init();
     button_init();
     exti_init();
     GPIOD->BSRR = GPIO_BSRR_BR_12;
     led_update(counter);
     while(1) {
-        delay();
-        counter += 1;
+        //delay();
+        //counter += 1;
         led_update(counter);
-        if (counter > 50) {
-          EXTI->SWIER |= EXTI_SWIER_SWIER6;
-        }
     }
 
     return 0;
