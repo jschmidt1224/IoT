@@ -62,13 +62,9 @@ void delay()
 
 int EXTI0_IRQHandler()
 {
-  //GPIOD->BSRR = GPIO_BSRR_BS_12;
   counter++;
   NVIC_ClearPendingIRQ(EXTI0_IRQn);
-  EXTI->PR|=(1<<0);
-  NVIC_DisableIRQ(EXTI0_IRQn);
-  delay();
-  NVIC_EnableIRQ(EXTI0_IRQn);
+  EXTI->PR |= EXTI_PR_PR0;
   return 0;
 }
 
