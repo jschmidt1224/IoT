@@ -3,7 +3,31 @@
 
 uint8_t counter = 0;
 
+void usart_init()
+{
+  // make sure the relevant pins are appropriately set up.
+  RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+  GPIOA->MODER &= ~(GPIO_MODER_MODER9) & ~(GPIO_MODER_MODER10);
+  GPIOA->MODER |= GPIO_MODER_MODER9_1 | GPIO_MODER_MODER10_1;
+  GPIOA->AFR[1] |= (7 << 8) | (7 << 4);
 
+  RCC->APB2ENR |= RCC_APB2ENR_USART1EN;            // enable clock for USART1
+  USART1->BRR  = 64000000L/115200L;                // set baudrate
+  USART1->CR1 |= (USART_CR1_RE | USART_CR1_TE);  // RX, TX enable
+  USART1->CR1 |= USART_CR1_UE;                    // USART enable
+  }
+
+int SendChar (int ch)  {
+  while (!(USART1->SR & USART_SR_TXE));
+  USART1->DR = (ch & 0xFF);
+  return (ch);
+}
+
+int GetChar (void)  {
+  //while (!(USART1_SR & USART1_SR_RXNE));
+  //return ((int)(USART1_DR & 0xFF));
+  return 0;
+}
 
 void led_init()
 {
@@ -73,12 +97,14 @@ int main()
     led_init();
     button_init();
     exti_init();
+    usart_init();
     GPIOD->BSRR = GPIO_BSRR_BR_12;
     led_update(counter);
     while(1) {
         //delay();
         //counter += 1;
         led_update(counter);
+        SendChar('a');
     }
 
     return 0;
