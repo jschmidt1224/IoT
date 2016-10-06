@@ -12,9 +12,13 @@ void usart_init()
   GPIOA->MODER |= GPIO_MODER_MODER9_1 | GPIO_MODER_MODER10_1;
   GPIOA->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR9 | GPIO_OSPEEDER_OSPEEDR10;
   RCC->APB2ENR |= RCC_APB2ENR_USART1EN;            // enable clock for USART1
-  USART1->BRR  = 16000000L/300L;                // set baudrate
+  USART1->BRR  = 16000000L/9600L;                // set baudrate
   USART1->CR1 |= (USART_CR1_RE | USART_CR1_TE);  // RX, TX enable
   USART1->CR1 |= USART_CR1_UE;                    // USART enable
+  RCC->APB2ENR |= RCC_APB2ENR_USART2EN;
+  USART2->BRR  = 16000000L/9600L;
+  USART2->CR1 |= (USART_CR1_RE | USART_CR1_TE);
+  USART2->CR1 |= USART_CR1_UE;
   }
 
 int send_char(int ch)  {
@@ -102,7 +106,7 @@ int main()
     GPIOD->BSRR = GPIO_BSRR_BR_12;
     led_update(counter);
     while(1) {
-        get_char();
+        //get_char();
         //delay();
         //counter += 1;
         led_update(counter);
