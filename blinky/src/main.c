@@ -2,35 +2,38 @@
 #include "stm32f407xx.h"
 
 uint8_t counter = 0;
-
 void usart_init()
 {
   // make sure the relevant pins are appropriately set up.
   GPIOA->AFR[1] |= (7 << 8) | (7 << 4);
+  GPIOA->AFR[0] |= (7 << 8) | (7 << 12);
   RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
   GPIOA->MODER &= ~(GPIO_MODER_MODER9) & ~(GPIO_MODER_MODER10);
   GPIOA->MODER |= GPIO_MODER_MODER9_1 | GPIO_MODER_MODER10_1;
   GPIOA->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR9 | GPIO_OSPEEDER_OSPEEDR10;
+  GPIOA->MODER &= ~(GPIO_MODER_MODER2) & ~(GPIO_MODER_MODER3);
+  GPIOA->MODER |= GPIO_MODER_MODER2_1 | GPIO_MODER_MODER3_1;
+  GPIOA->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR2 | GPIO_OSPEEDER_OSPEEDR3;
   RCC->APB2ENR |= RCC_APB2ENR_USART1EN;            // enable clock for USART1
   USART1->BRR  = 16000000L/9600L;                // set baudrate
   USART1->CR1 |= (USART_CR1_RE | USART_CR1_TE);  // RX, TX enable
   USART1->CR1 |= USART_CR1_UE;                    // USART enable
-  RCC->APB2ENR |= RCC_APB2ENR_USART2EN;
-  USART2->BRR  = 16000000L/9600L;
+  RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+  USART2->BRR  = 16000000L/115200L;
   USART2->CR1 |= (USART_CR1_RE | USART_CR1_TE);
   USART2->CR1 |= USART_CR1_UE;
   }
 
 int send_char(int ch)  {
-  while (!(USART1->SR & USART_SR_TXE));
-  USART1->DR = (ch & 0xFF);
+  while (!(USART2->SR & USART_SR_TXE));
+  USART2->DR = (ch & 0xFF);
   return (ch);
 }
 
 int get_char(void)  {
-  while (!(USART1->SR & USART_SR_RXNE));
-  send_char(USART1->DR);
-  return ((int)(USART1->DR & 0xFF));
+  while (!(USART2->SR & USART_SR_RXNE));
+  send_char(USART2->DR);
+  return ((int)(USART2->DR & 0xFF));
 }
 
 void led_init()
