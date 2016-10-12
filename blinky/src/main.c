@@ -7,7 +7,7 @@ void usart_init()
   // make sure the relevant pins are appropriately set up.
   GPIOA->AFR[1] |= (7 << 8) | (7 << 4);
   GPIOA->AFR[0] |= (7 << 8) | (7 << 12);
-  RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+  //RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
   GPIOA->MODER &= ~(GPIO_MODER_MODER9) & ~(GPIO_MODER_MODER10);
   GPIOA->MODER |= GPIO_MODER_MODER9_1 | GPIO_MODER_MODER10_1;
   GPIOA->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR9 | GPIO_OSPEEDER_OSPEEDR10;
@@ -19,9 +19,36 @@ void usart_init()
   USART1->CR1 |= (USART_CR1_RE | USART_CR1_TE);  // RX, TX enable
   USART1->CR1 |= USART_CR1_UE;                    // USART enable
   RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
-  USART2->BRR  = 16000000L/115200L;
+  USART2->BRR  = 0x96; //20000000L/(2*8*115200L);
   USART2->CR1 |= (USART_CR1_RE | USART_CR1_TE);
   USART2->CR1 |= USART_CR1_UE;
+  }
+
+  void clk_init()
+  {
+    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+    GPIOA->AFR[0] &= ~0xF;
+    GPIOA->MODER |= GPIO_MODER_MODER8_1;
+
+    RCC->CFGR |= RCC_CFGR_MCO1;
+    RCC->CFGR &= RCC_CFGR_MCO1PRE; //prescale x 5
+
+    RCC->CR |= RCC_CR_HSEON;  //Enable external oscillator
+    while((RCC->CR & RCC_CR_HSERDY) != RCC_CR_HSERDY);
+
+    //Set HSE oscillator as PLL source, set PLLP to 4, PLLN to 80,
+    //and PLLM to 8 so that VCO output is 20 MHz
+    RCC->PLLCFGR |= RCC_PLLCFGR_PLLSRC | RCC_PLLCFGR_PLLP_0 |
+                    RCC_PLLCFGR_PLLN_4 | RCC_PLLCFGR_PLLN_6 |RCC_PLLCFGR_PLLM_3;
+
+    RCC->CR |= RCC_CR_PLLON;
+    while((RCC->CR & RCC_CR_PLLRDY) != RCC_CR_PLLRDY);
+
+    //Select System clock
+    RCC->CFGR &= ~RCC_CFGR_SW;
+    RCC->CFGR |= RCC_CFGR_SW_PLL;
+
+    while((RCC->CFGR & RCC_CFGR_SW_PLL) != RCC_CFGR_SW_PLL);
   }
 
 int send_char(int ch)  {
@@ -102,6 +129,7 @@ int EXTI0_IRQHandler()
 
 int main()
 {
+    clk_init();
     led_init();
     button_init();
     exti_init();
@@ -109,7 +137,7 @@ int main()
     GPIOD->BSRR = GPIO_BSRR_BR_12;
     led_update(counter);
     while(1) {
-        //get_char();
+        send_char('U');
         //delay();
         //counter += 1;
         led_update(counter);
