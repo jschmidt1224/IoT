@@ -5,59 +5,53 @@ uint8_t counter = 0;
 void usart_init()
 {
   // make sure the relevant pins are appropriately set up.
-  GPIOA->AFR[1] |= (7 << 8) | (7 << 4);
   GPIOA->AFR[0] |= (7 << 8) | (7 << 12);
   //RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
-  GPIOA->MODER &= ~(GPIO_MODER_MODER9) & ~(GPIO_MODER_MODER10);
-  GPIOA->MODER |= GPIO_MODER_MODER9_1 | GPIO_MODER_MODER10_1;
-  GPIOA->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR9 | GPIO_OSPEEDER_OSPEEDR10;
   GPIOA->MODER &= ~(GPIO_MODER_MODER2) & ~(GPIO_MODER_MODER3);
   GPIOA->MODER |= GPIO_MODER_MODER2_1 | GPIO_MODER_MODER3_1;
   GPIOA->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR2 | GPIO_OSPEEDER_OSPEEDR3;
-  RCC->APB2ENR |= RCC_APB2ENR_USART1EN;            // enable clock for USART1
-  USART1->BRR  = 16000000L/9600L;                // set baudrate
-  USART1->CR1 |= (USART_CR1_RE | USART_CR1_TE);  // RX, TX enable
-  USART1->CR1 |= USART_CR1_UE;                    // USART enable
   RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
   USART2->BRR  = 0x96; //20000000L/(2*8*115200L);
   USART2->CR1 |= (USART_CR1_RE | USART_CR1_TE);
   USART2->CR1 |= USART_CR1_UE;
-  }
+}
 
-  void clk_init()
-  {
-    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
-    GPIOA->AFR[0] &= ~0xF;
-    GPIOA->MODER |= GPIO_MODER_MODER8_1;
+void clk_init()
+{
+  RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+  GPIOA->AFR[0] &= ~0xF;
+  GPIOA->MODER |= GPIO_MODER_MODER8_1;
 
-    RCC->CFGR |= RCC_CFGR_MCO1;
-    RCC->CFGR &= RCC_CFGR_MCO1PRE; //prescale x 5
+  RCC->CFGR |= RCC_CFGR_MCO1;
+  RCC->CFGR &= RCC_CFGR_MCO1PRE; //prescale x 5
 
-    RCC->CR |= RCC_CR_HSEON;  //Enable external oscillator
-    while((RCC->CR & RCC_CR_HSERDY) != RCC_CR_HSERDY);
+  RCC->CR |= RCC_CR_HSEON;  //Enable external oscillator
+  while((RCC->CR & RCC_CR_HSERDY) != RCC_CR_HSERDY);
 
-    //Set HSE oscillator as PLL source, set PLLP to 4, PLLN to 80,
-    //and PLLM to 8 so that VCO output is 20 MHz
-    RCC->PLLCFGR |= RCC_PLLCFGR_PLLSRC | RCC_PLLCFGR_PLLP_0 |
-                    RCC_PLLCFGR_PLLN_4 | RCC_PLLCFGR_PLLN_6 |RCC_PLLCFGR_PLLM_3;
+  //Set HSE oscillator as PLL source, set PLLP to 4, PLLN to 80,
+  //and PLLM to 8 so that VCO output is 20 MHz
+  RCC->PLLCFGR |= RCC_PLLCFGR_PLLSRC | RCC_PLLCFGR_PLLP_0 |
+                  RCC_PLLCFGR_PLLN_4 | RCC_PLLCFGR_PLLN_6 |RCC_PLLCFGR_PLLM_3;
 
-    RCC->CR |= RCC_CR_PLLON;
-    while((RCC->CR & RCC_CR_PLLRDY) != RCC_CR_PLLRDY);
+  RCC->CR |= RCC_CR_PLLON;
+  while((RCC->CR & RCC_CR_PLLRDY) != RCC_CR_PLLRDY);
 
-    //Select System clock
-    RCC->CFGR &= ~RCC_CFGR_SW;
-    RCC->CFGR |= RCC_CFGR_SW_PLL;
+  //Select System clock
+  RCC->CFGR &= ~RCC_CFGR_SW;
+  RCC->CFGR |= RCC_CFGR_SW_PLL;
 
-    while((RCC->CFGR & RCC_CFGR_SW_PLL) != RCC_CFGR_SW_PLL);
-  }
+  while((RCC->CFGR & RCC_CFGR_SW_PLL) != RCC_CFGR_SW_PLL);
+}
 
-int send_char(int ch)  {
+int send_char(int ch)
+{
   while (!(USART2->SR & USART_SR_TXE));
   USART2->DR = (ch & 0xFF);
   return (ch);
 }
 
-int get_char(void)  {
+int get_char(void)
+{
   while (!(USART2->SR & USART_SR_RXNE));
   send_char(USART2->DR);
   return ((int)(USART2->DR & 0xFF));
