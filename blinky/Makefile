@@ -20,7 +20,7 @@ TOOLS_DIR=tools
 #############################################################################
 # Compiler flags
 #############################################################################
-CFLAGS = -ggdb3 -Og -Wall -W -Wextra
+CFLAGS = -ggdb3 -O0 -Wall -W -Wextra
 CFLAGS += -I$(INCLUDE_DIR)
 CFLAGS += -mcpu=cortex-m4 -mthumb -ffunction-sections -fdata-sections
 CFLAGS += -mlittle-endian -DSTM32F407xx

@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include "stm32f407xx.h"
 
+
+void delay();
 uint8_t counter = 0;
 void usart_init()
 {
@@ -16,8 +18,10 @@ void usart_init()
   USART2->CR1 |= USART_CR1_UE;
 }
 
-void clk_init()
+static void clk_init()
 {
+  RCC->APB1ENR |= RCC_APB1ENR_PWREN;
+    PWR->CR |= PWR_CR_VOS;
   /*RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
   GPIOA->AFR[0] &= ~0xF;
   GPIOA->MODER |= GPIO_MODER_MODER8_1;
@@ -32,20 +36,39 @@ void clk_init()
   //RCC->PLLCFGR |= RCC_PLLCFGR_PLLSRC_HSE | RCC_PLLCFGR_PLLP_0 | RCC_PLLCFGR_PLLN_2 |
   //                RCC_PLLCFGR_PLLN_5 | RCC_PLLCFGR_PLLN_6 | RCC_PLLCFGR_PLLM_1;
 
-  RCC->PLLCFGR = (2 << 28) | RCC_PLLCFGR_PLLSRC_HSE | (4 << 0) | (50 << 6)
-               | (0 << 16);
+  //RCC->PLLCFGR |= (2 << 28) | RCC_PLLCFGR_PLLSRC_HSE | (4 << 0) | (50 << 6)
+//               | (0 << 16);
 
+
+  uint32_t PLL_M = 4;
+  uint32_t PLL_P = 2;
+  uint32_t PLL_N = 168;
+  uint32_t PLL_Q = 7;
+  RCC->PLLCFGR = PLL_M | (PLL_N << 6) | (((PLL_P >> 1) - 1) << 16) |
+           (RCC_PLLCFGR_PLLSRC_HSE) | (PLL_Q << 24);
 
   RCC->CR |= RCC_CR_PLLON;
   GPIOD->BSRR = GPIO_BSRR_BR_12;
   while(!(RCC->CR & RCC_CR_PLLRDY));
+  GPIOD->BSRR = GPIO_BSRR_BR_13;
 
+  RCC->CFGR &= RCC_CFGR_PPRE2;
+  RCC->CFGR |= RCC_CFGR_PPRE2_2;
+
+  RCC->CFGR &= RCC_CFGR_PPRE1;
+  RCC->CFGR |= RCC_CFGR_PPRE1_0 | RCC_CFGR_PPRE1_2;
+
+  RCC->CFGR &= RCC_CFGR_HPRE;
+  RCC->CFGR |= RCC_CFGR_HPRE_0 | RCC_CFGR_HPRE_3;
   //Select System clock
   RCC->CFGR &= ~RCC_CFGR_SW;
   RCC->CFGR |= RCC_CFGR_SW_PLL;
 
-  while(!(RCC->CFGR & RCC_CFGR_SW_PLL));
-  GPIOD->BSRR = GPIO_BSRR_BR_13;
+  GPIOD->BSRR = GPIO_BSRR_BR_14;
+  while(!(RCC->CFGR & RCC_CFGR_SWS_PLL));
+
+  GPIOD->BSRR = GPIO_BSRR_BR_15;
+  return;
 }
 
 int send_char(int ch)
@@ -68,7 +91,7 @@ void led_init()
   RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
   //Sets GPIOD ports 12-15 to output
   GPIOD->MODER &= ~(GPIO_MODER_MODER12) & ~(GPIO_MODER_MODER13);
-  GPIOD->MODER &= ~(GPIO_MODER_MODER14) & ~(GPIO_MODER_MODER14);
+  GPIOD->MODER &= ~(GPIO_MODER_MODER14) & ~(GPIO_MODER_MODER15);
   GPIOD->MODER |= GPIO_MODER_MODER12_0 | GPIO_MODER_MODER13_0;
   GPIOD->MODER |= GPIO_MODER_MODER14_0 | GPIO_MODER_MODER15_0;
 
@@ -130,7 +153,7 @@ int main()
 {
     led_init();
     clk_init();
-
+    //led_init();
     //button_init();
     //exti_init();
     //usart_init();
