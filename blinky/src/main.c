@@ -13,7 +13,7 @@ void usart_init()
   GPIOA->MODER |= GPIO_MODER_MODER2_1 | GPIO_MODER_MODER3_1;
   GPIOA->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR2 | GPIO_OSPEEDER_OSPEEDR3;
   RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
-  USART2->BRR  = 0x96;
+  USART2->BRR  = 100;
   USART2->CR1 |= (USART_CR1_RE | USART_CR1_TE);
   USART2->CR1 |= USART_CR1_UE;
 }
@@ -42,7 +42,7 @@ static void clk_init()
 
   uint32_t PLL_M = 4;
   uint32_t PLL_P = 2;
-  uint32_t PLL_N = 168;
+  uint32_t PLL_N = 100;
   uint32_t PLL_Q = 7;
   RCC->PLLCFGR = PLL_M | (PLL_N << 6) | (((PLL_P >> 1) - 1) << 16) |
            (RCC_PLLCFGR_PLLSRC_HSE) | (PLL_Q << 24);
@@ -154,9 +154,9 @@ int main()
     led_init();
     clk_init();
     //led_init();
-    //button_init();
-    //exti_init();
-    //usart_init();
+    button_init();
+    exti_init();
+    usart_init();
     //GPIOD->BSRR = GPIO_BSRR_BR_12;
     //led_update(counter);
     while(1) {
@@ -165,6 +165,8 @@ int main()
     //delay();
     //GPIOD->BSRR = GPIO_BSRR_BR_12;
     //delay();
+    send_char('U');
+    delay();
     }
     return 0;
 }
