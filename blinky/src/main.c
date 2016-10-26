@@ -8,12 +8,12 @@ void usart_init()
 {
   // make sure the relevant pins are appropriately set up.
   GPIOA->AFR[0] |= (7 << 8) | (7 << 12);
-  //RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+  RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
   GPIOA->MODER &= ~(GPIO_MODER_MODER2) & ~(GPIO_MODER_MODER3);
   GPIOA->MODER |= GPIO_MODER_MODER2_1 | GPIO_MODER_MODER3_1;
   GPIOA->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR2 | GPIO_OSPEEDER_OSPEEDR3;
   RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
-  USART2->BRR  = 100;
+  USART2->BRR  = 25;
   USART2->CR1 |= (USART_CR1_RE | USART_CR1_TE);
   USART2->CR1 |= USART_CR1_UE;
 }
@@ -21,24 +21,10 @@ void usart_init()
 static void clk_init()
 {
   RCC->APB1ENR |= RCC_APB1ENR_PWREN;
-    PWR->CR |= PWR_CR_VOS;
-  /*RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
-  GPIOA->AFR[0] &= ~0xF;
-  GPIOA->MODER |= GPIO_MODER_MODER8_1;
+  PWR->CR |= PWR_CR_VOS;
 
-  RCC->CFGR |= RCC_CFGR_MCO1;
-  RCC->CFGR |= RCC_CFGR_MCO1PRE; //prescale x 5
-*/
   RCC->CR |= RCC_CR_HSEON;  //Enable external oscillator
   while((RCC->CR & RCC_CR_HSERDY) != RCC_CR_HSERDY);
-
-
-  //RCC->PLLCFGR |= RCC_PLLCFGR_PLLSRC_HSE | RCC_PLLCFGR_PLLP_0 | RCC_PLLCFGR_PLLN_2 |
-  //                RCC_PLLCFGR_PLLN_5 | RCC_PLLCFGR_PLLN_6 | RCC_PLLCFGR_PLLM_1;
-
-  //RCC->PLLCFGR |= (2 << 28) | RCC_PLLCFGR_PLLSRC_HSE | (4 << 0) | (50 << 6)
-//               | (0 << 16);
-
 
   uint32_t PLL_M = 4;
   uint32_t PLL_P = 2;
@@ -149,6 +135,20 @@ int EXTI0_IRQHandler()
   return 0;
 }
 
+void i2c_init()
+{
+  RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_GPIOBEN |
+                  RCC_AHB1ENR_GPIOCEN | RCC_AHB1ENR_GPIODEN;
+  RCC->APB1ENR |= RCC_APB1ENR_I2C1EN | RCC_APB1ENR_SPI3EN;
+  RCC->CR |= RCC_CR_PLLI2SON;
+  while (!(RCC->CR | RCC_CR_PLLI2SRDY));
+
+  //AF4 is I2C1, AF6 is SPI3
+  GPIOB->MODER &= ~GPIO_MODER_MODER6 & ~GPIO_MODER_MODER9;
+  GPIOB->MODER |= GPIO_MODER_MODER6_1 | GPIO_MODER_MODER9_1;
+  GPIOB->OTYPER |= GPIO_OTYPER_OT_6 |  GPIO_OTYPER_OT_9;
+}
+
 int main()
 {
     led_init();
@@ -160,13 +160,7 @@ int main()
     //GPIOD->BSRR = GPIO_BSRR_BR_12;
     //led_update(counter);
     while(1) {
-    //    led_update(counter);
-    GPIOD->BSRR = GPIO_BSRR_BS_12;
-    //delay();
-    //GPIOD->BSRR = GPIO_BSRR_BR_12;
-    //delay();
-    send_char('U');
-    delay();
+
     }
     return 0;
 }
