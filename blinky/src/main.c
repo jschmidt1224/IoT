@@ -143,7 +143,7 @@ void i2c_init()
   RCC->CR |= RCC_CR_PLLI2SON;
   while (!(RCC->CR | RCC_CR_PLLI2SRDY));
 
-  //AF4 is I2C1, AF6 is SPI3
+  //AF4 is I2C1, AF6 is SPI3 (PB6 is SCL, PB9 is SDA)
   GPIOB->MODER &= ~GPIO_MODER_MODER6 & ~GPIO_MODER_MODER9;
   GPIOB->MODER |= GPIO_MODER_MODER6_1 | GPIO_MODER_MODER9_1;
   GPIOB->OTYPER |= GPIO_OTYPER_OT_6 |  GPIO_OTYPER_OT_9;
@@ -157,6 +157,16 @@ void i2c_init()
   I2C1->CCR |= I2C_CCR_FS;
   I2C1->CCR |= 83; //Setting the I2C clock to ~100KHz
   I2C1->TRISE |= 26;
+  I2C1->OAR1 |= 99; //Seven bit interface address
+  I2C1->CR1 |= I2C_CR1_ACK;
+  I2C1->CR1 |= I2C_CR1_PE;
+  I2C1->CR1 |= I2C_CR1_START;
+
+}
+
+void spi_init()
+{
+
 }
 
 int main()
@@ -167,10 +177,12 @@ int main()
     button_init();
     exti_init();
     usart_init();
+    i2c_init();
     //GPIOD->BSRR = GPIO_BSRR_BR_12;
     //led_update(counter);
     while(1) {
-
+      if (I2C1->SR1 & I2C_SR1_TXE)
+        I2C1->DR |= 0x55;
     }
     return 0;
 }
