@@ -1,4 +1,4 @@
-BINPATH=~/sat/bin
+BINPATH=~/sat/gcc-arm-none-eabi/bin
 
 CC=$(BINPATH)/arm-none-eabi-gcc
 AR=$(BINPATH)/arm-none-eabi-ar
@@ -50,4 +50,3 @@ $(LIBNAME): $(OBJS)
 
 clean:
 	rm -f $(OBJS) $(LIBNAME)
-	

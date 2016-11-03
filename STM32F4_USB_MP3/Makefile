@@ -26,7 +26,7 @@ endif
 
 ###################################################
 
-BINPATH=/opt/gcc-arm-none-eabi-5_4-2016q2/bin/
+BINPATH=~/sat/gcc-arm-none-eabi/bin
 CC=$(BINPATH)/arm-none-eabi-gcc
 OBJCOPY=$(BINPATH)/arm-none-eabi-objcopy
 SIZE=$(BINPATH)/arm-none-eabi-size
@@ -97,4 +97,3 @@ clean:
 	rm -f $(OUTPATH)/$(PROJ_NAME).hex
 	rm -f $(OUTPATH)/$(PROJ_NAME).bin
 	$(MAKE) clean -C lib # Remove this line if you don't want to clean the libs as well
-	

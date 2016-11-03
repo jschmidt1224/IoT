@@ -1,4 +1,4 @@
-BINPATH=~/sat/bin
+BINPATH=~/sat/gcc-arm-none-eabi/bin
 
 CC=$(BINPATH)/arm-none-eabi-gcc
 AR=$(BINPATH)/arm-none-eabi-ar
@@ -30,7 +30,7 @@ endif
 
 CFLAGS += -ffreestanding -nostdlib
 CFLAGS += -Ireal -Ipub
-	
+
 SRCS = mp3dec.c mp3tabs.c bitstream.c buffers.c dct32.c dequant.c dqchan.c
 SRCS += huffman.c hufftabs.c imdct.c polyphase.c scalfact.c
 SRCS += stproc.c subband.c trigtabs_fixpt.c
