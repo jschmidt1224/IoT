@@ -22,10 +22,11 @@ endif
 
 ###################################################
 
-BINPATH=/opt/gcc-arm-none-eabi-5_4-2016q2/bin/
+BINPATH=~/sat/gcc-arm-none-eabi/bin
 CC=$(BINPATH)/arm-none-eabi-gcc
 OBJCOPY=$(BINPATH)/arm-none-eabi-objcopy
 SIZE=$(BINPATH)/arm-none-eabi-size
+GDB=$(BINPATH)/arm-none-eabi-gdb
 
 CFLAGS  = -std=gnu99 -g -O2 -Wall -Tstm32_flash.ld
 CFLAGS += -mlittle-endian -mthumb -mthumb-interwork -nostartfiles -mcpu=cortex-m4
@@ -84,3 +85,7 @@ clean:
 	rm -f $(OUTPATH)/$(PROJ_NAME).bin
 	$(MAKE) clean -C lib
 	$(MAKE) clean -C helix
+
+.PHONY: flash
+flash: $(OUTPATH)/$(PROJ_NAME).elf
+	@$(GDB) $< -x tools/flash.gdb -batch
