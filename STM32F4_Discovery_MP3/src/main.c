@@ -16,22 +16,24 @@ HMP3Decoder hMP3Decoder;
 static void AudioCallback(void *context,int buffer);
 void Delay(volatile uint32_t nCount);
 void init();
+void init_clock();
 
 // External variables
 extern const char mp3_data[];
 
 // Some macros
-#define MP3_SIZE	687348
+#define MP3_SIZE	600211
 #define BUTTON		(GPIOA->IDR & GPIO_Pin_0)
 
 int main(void) {
+	init_clock();
 	init();
 	int volume = 0;
 
 	// Play mp3
 	hMP3Decoder = MP3InitDecoder();
 	InitializeAudio(Audio44100HzSettings);
-	SetAudioVolume(0xCF);
+	SetAudioVolume(0xAF);
 	PlayAudioWithCallback(AudioCallback, 0);
 
 	for(;;) {
@@ -91,7 +93,7 @@ static void AudioCallback(void *context, int buffer) {
 	offset = MP3FindSyncWord((unsigned char*)read_ptr, bytes_left);
 	bytes_left -= offset;
 
-	if (bytes_left <= 10000) {
+	if (bytes_left <= 30000) {
 		read_ptr = mp3_data;
 		bytes_left = MP3_SIZE;
 		offset = MP3FindSyncWord((unsigned char*)read_ptr, bytes_left);
@@ -196,6 +198,19 @@ void Delay(volatile uint32_t nCount) {
 	time_var1 = nCount;
 
 	while(time_var1){};
+}
+
+void init_clock() {
+
+    RCC_PLLCmd(DISABLE);
+
+    uint32_t PLLM = 4, PLLN = 100, PLLP = 2, PLLQ = 7;
+    RCC_PLLConfig(RCC_PLLSource_HSE, PLLM, PLLN, PLLP, PLLQ);
+    RCC_PLLCmd(ENABLE);
+
+    while(!RCC_GetFlagStatus(RCC_FLAG_PLLRDY));
+
+    RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
 }
 
 /*

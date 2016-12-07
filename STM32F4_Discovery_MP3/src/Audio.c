@@ -78,11 +78,11 @@ void InitializeAudio(int plln, int pllr, int i2sdiv, int i2sodd) {
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource4, GPIO_AF_SPI3);
 
 	// Reset the codec.
-	GPIOD ->BSRRH = 1 << 4;
+	GPIOD->BSRRH = 1 << 4;
 	for (volatile int i = 0; i < 0x4fff; i++) {
 		__asm__ volatile("nop");
 	}
-	GPIOD ->BSRRL = 1 << 4;
+	GPIOD->BSRRL = 1 << 4;
 
 	// Reset I2C.
 	RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C1, ENABLE);
@@ -91,8 +91,8 @@ void InitializeAudio(int plln, int pllr, int i2sdiv, int i2sodd) {
 	// Configure I2C.
 	uint32_t pclk1 = 42000000;
 
-	I2C1 ->CR2 = pclk1 / 1000000; // Configure frequency and disable interrupts and DMA.
-	I2C1 ->OAR1 = I2C_OAR1_ADDMODE | 0x33;
+	I2C1->CR2 = pclk1 / 1000000; // Configure frequency and disable interrupts and DMA.
+	I2C1->OAR1 = I2C_OAR1_ADDMODE | 0x33;
 
 	// Configure I2C speed in standard mode.
 	const uint32_t i2c_speed = 100000;
@@ -100,10 +100,10 @@ void InitializeAudio(int plln, int pllr, int i2sdiv, int i2sodd) {
 	if (ccrspeed < 4) {
 		ccrspeed = 4;
 	}
-	I2C1 ->CCR = ccrspeed;
-	I2C1 ->TRISE = pclk1 / 1000000 + 1;
+	I2C1->CCR = ccrspeed;
+	I2C1->TRISE = pclk1 / 1000000 + 1;
 
-	I2C1 ->CR1 = I2C_CR1_ACK | I2C_CR1_PE; // Enable and configure the I2C peripheral.
+	I2C1->CR1 = I2C_CR1_ACK | I2C_CR1_PE; // Enable and configure the I2C peripheral.
 
 	// Configure codec.
 	WriteRegister(0x02, 0x01); // Keep codec powered off.
@@ -128,33 +128,33 @@ void InitializeAudio(int plln, int pllr, int i2sdiv, int i2sodd) {
 	WriteRegister(0x1b, 0x0a);
 
 	// Disable I2S.
-	SPI3 ->I2SCFGR = 0;
+	SPI3->I2SCFGR = 0;
 
 	// I2S clock configuration
-	RCC ->CFGR &= ~RCC_CFGR_I2SSRC; // PLLI2S clock used as I2S clock source.
-	RCC ->PLLI2SCFGR = (pllr << 28) | (plln << 6);
+	RCC->CFGR &= ~RCC_CFGR_I2SSRC; // PLLI2S clock used as I2S clock source.
+	RCC->PLLI2SCFGR = (pllr << 28) | (plln << 6);
 
 	// Enable PLLI2S and wait until it is ready.
-	RCC ->CR |= RCC_CR_PLLI2SON;
+	RCC->CR |= RCC_CR_PLLI2SON;
 	while (!(RCC ->CR & RCC_CR_PLLI2SRDY ))
 		;
 
 	// Configure I2S.
-	SPI3 ->I2SPR = i2sdiv | (i2sodd << 8) | SPI_I2SPR_MCKOE;
-	SPI3 ->I2SCFGR = SPI_I2SCFGR_I2SMOD | SPI_I2SCFGR_I2SCFG_1
+	SPI3->I2SPR = i2sdiv | (i2sodd << 8) | SPI_I2SPR_MCKOE;
+	SPI3->I2SCFGR = SPI_I2SCFGR_I2SMOD | SPI_I2SCFGR_I2SCFG_1
 			| SPI_I2SCFGR_I2SE; // Master transmitter, Phillips mode, 16 bit values, clock polarity low, enable.
 
 }
 
 void AudioOn() {
 	WriteRegister(0x02, 0x9e);
-	SPI3 ->I2SCFGR = SPI_I2SCFGR_I2SMOD | SPI_I2SCFGR_I2SCFG_1
+	SPI3->I2SCFGR = SPI_I2SCFGR_I2SMOD | SPI_I2SCFGR_I2SCFG_1
 			| SPI_I2SCFGR_I2SE; // Master transmitter, Phillips mode, 16 bit values, clock polarity low, enable.
 }
 
 void AudioOff() {
 	WriteRegister(0x02, 0x01);
-	SPI3 ->I2SCFGR = 0;
+	SPI3->I2SCFGR = 0;
 }
 
 void SetAudioVolume(int volume) {
@@ -275,7 +275,7 @@ static void StopAudioDMA() {
 }
 
 void DMA1_Stream7_IRQHandler() {
-	DMA1 ->HIFCR |= DMA_HIFCR_CTCIF7; // Clear interrupt flag.
+	DMA1->HIFCR |= DMA_HIFCR_CTCIF7; // Clear interrupt flag.
 
 	if (NextBufferSamples) {
 		StartAudioDMAAndRequestBuffers();
