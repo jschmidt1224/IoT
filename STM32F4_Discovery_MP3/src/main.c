@@ -33,7 +33,7 @@ int main(void) {
 	// Play mp3
 	hMP3Decoder = MP3InitDecoder();
 	InitializeAudio(Audio44100HzSettings);
-	SetAudioVolume(0xAF);
+	SetAudioVolume(0xCF);
 	PlayAudioWithCallback(AudioCallback, 0);
 
 	for(;;) {
@@ -93,10 +93,11 @@ static void AudioCallback(void *context, int buffer) {
 	offset = MP3FindSyncWord((unsigned char*)read_ptr, bytes_left);
 	bytes_left -= offset;
 
-	if (bytes_left <= 30000) {
+	if (bytes_left <= 2889) {
 		read_ptr = mp3_data;
 		bytes_left = MP3_SIZE;
 		offset = MP3FindSyncWord((unsigned char*)read_ptr, bytes_left);
+		bytes_left -= offset;
 	}
 
 	read_ptr += offset;

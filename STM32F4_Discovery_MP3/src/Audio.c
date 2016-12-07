@@ -195,7 +195,7 @@ void StopAudio() {
 	CallbackFunction = NULL;
 }
 
-void ProvideAudioBuffer(void *samples, int numsamples) {
+/*void ProvideAudioBuffer(void *samples, int numsamples) {
 	while (!ProvideAudioBufferWithoutBlocking(samples, numsamples))
 		__asm__ volatile ("wfi");
 }
@@ -215,7 +215,7 @@ bool ProvideAudioBufferWithoutBlocking(void *samples, int numsamples) {
 	NVIC_EnableIRQ(DMA1_Stream7_IRQn);
 
 	return true;
-}
+}*/
 
 static void WriteRegister(uint8_t address, uint8_t value) {
 	while (I2C1 ->SR2 & I2C_SR2_BUSY )
