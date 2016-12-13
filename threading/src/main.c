@@ -1,17 +1,17 @@
 #include "stm32f4xx.h"
 // Keil::Device:STM32Cube HAL:Common
 
-#define LED0 (1<<7)
-#define LED1 (1<<8)
-#define LED2 (1<<9)
-#define LED3 (1<<10)
+#define LED0 (1<<12)
+#define LED1 (1<<13)
+#define LED2 (1<14)
+#define LED3 (1<<15)
 
 /* Macros for word accesses */
 #define HW32_REG(ADDRESS) (*((volatile unsigned long *)(ADDRESS)))
 /* Use Breakpoint to stop when error is detected
 (KEIL MDK specific intrinsic) */
 /* it can be changed to while(1) XXif needed */
-#define stop_cpu while(1);
+#define stop_cpu ;
 void LED_initialize(void); // Initialize LED
 void task0(void); // Toggle LED0
 void task1(void); // Toggle LED1
@@ -27,7 +27,8 @@ uint32_t curr_task = 0; // Current task
 uint32_t* _curr_task = &curr_task;
 uint32_t next_task = 1; // Next task
 uint32_t* _next_task = &next_task;
-uint32_t PSP_array[4]; // Process Stack Pointer for each task
+uint32_t PSP_array[4];
+uint32_t* _PSP_array = (uint32_t*)&PSP_array; // Process Stack Pointer for each task
 // -------------------------------------------------------------
 // Start of main program
 int main(void)
@@ -60,11 +61,13 @@ int main(void)
   curr_task = 0; // Switch to task #0 (Current task)
   __set_PSP((PSP_array[curr_task] + 16*4)); // Set PSP to topof task 0 stack
   NVIC_SetPriority(PendSV_IRQn, 0xFF); // Set PendSV to lowest possible priority
-  SysTick_Config(168000); // 1000 Hz SysTick interrupton 168MHz core clock
+  SysTick_Config(168); // 1000 Hz SysTick interrupton 168MHz core clock
   __set_CONTROL(0x3); // Switch to use Process Stack, unprivilegedstate
   __ISB(); // Execute ISB after changing CONTROL (architecturalrecommendation)
+  //GPIOD->BSRR |= LED1;
   task0(); // Start task 0
   while(1) {
+
     stop_cpu;// Should not be here
   }
 }
@@ -73,30 +76,32 @@ void task0(void) // Toggle LED #0
 {
   while (1) {
     if (systick_count & 0x80) {
-      GPIOE->BSRR = LED0;
+      GPIOD->BSRR = LED0;
     } else {
-      GPIOE->BSRR = LED0 << 16;
+      GPIOD->BSRR = LED0 << 16;
     } // Clear LED 0
   }
 }
 
 void task1(void) // Toggle LED #0
 {
+  GPIOD->BSRR = LED1;
   while (1) {
     if (systick_count & 0x100) {
-      GPIOE->BSRR = LED1;
+      //GPIOD->BSRR = LED1;
     } else {
-      GPIOE->BSRR = LED1 << 16;
+      //GPIOD->BSRR = LED1;
     } // Clear LED 0
   }
 }
 void task2(void) // Toggle LED #0
 {
+  GPIOD->BSRR |= LED2;
   while (1) {
     if (systick_count & 0x200) {
-      GPIOE->BSRR = LED2;
+      //GPIOD->BSRR = LED2;
     } else {
-      GPIOE->BSRR = LED2 << 16;
+      //GPIOD->BSRR = LED2;
     } // Clear LED 0
   }
 }
@@ -104,16 +109,16 @@ void task3(void) // Toggle LED #0
 {
   while (1) {
     if (systick_count & 0x400) {
-      GPIOE->BSRR = LED3;
+      //GPIOD->BSRR = LED3;
     } else {
-      GPIOE->BSRR = LED3 << 16;
+      //GPIOD->BSRR = LED3;
     } // Clear LED 0
   }
 }
 
   // ------------------------------------------------------------
-  void PendSV_Handler(void)
-  { // Context switching code
+void PendSV_Handler(void)
+{ // Context switching code
   // Simple version - assume No floating point support
   // -------------------------
   // Save current context
@@ -121,7 +126,7 @@ void task3(void) // Toggle LED #0
       "STMDB R0!,{R4-R11}\n" // Save R4 to R11 in task stack (8 regs)
       "LDR R1,=_curr_task\n"
       "LDR R2,[R1]\n" // Get current task ID
-      "LDR R3,=PSP_array\n"
+      "LDR R3,=_PSP_array\n"
       "STR R0,[R3, R2, LSL #2]\n" // Save PSP value into PSP_array
       // -------------------------
       // Load next context
@@ -137,6 +142,7 @@ void task3(void) // Toggle LED #0
 void SysTick_Handler(void) // 1KHz
 { // Increment systick counter for LED blinking
   systick_count++;
+  GPIOD->BSRR |= LED3;
   // Simple task round robin scheduler
   switch(curr_task) {
   case(0): next_task=1; break;
@@ -156,17 +162,18 @@ void SysTick_Handler(void) // 1KHz
 void LED_initialize(void)
 {
   // Configure LED outputs
-  RCC->AHB1ENR |= RCC_AHB1ENR_GPIOEEN; // Enable Port D clock
+  RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN; // Enable Port D clock
   // Set pin 12, 13, 14, 15 as general purpose output mode(pull-push)
-  GPIOE->MODER |= (GPIO_MODER_MODER7_0 |
-  GPIO_MODER_MODER8_0 |
-  GPIO_MODER_MODER9_0 |
-  GPIO_MODER_MODER10_0 ) ;
+  GPIOD->MODER |= (GPIO_MODER_MODER12_0 |
+  GPIO_MODER_MODER13_0 |
+  GPIO_MODER_MODER14_0 |
+  GPIO_MODER_MODER15_0 ) ;
   // GPIOE->OTYPER |= 0; // No need to change - use pull-push output
-  GPIOE->OSPEEDR |= (GPIO_OSPEEDER_OSPEEDR7 | // 100MHz operations
-  GPIO_OSPEEDER_OSPEEDR8 |
-  GPIO_OSPEEDER_OSPEEDR9 |
-  GPIO_OSPEEDER_OSPEEDR10 );
-  GPIOE->PUPDR = 0; // No pull up , no pull down
+  GPIOD->OSPEEDR |= (GPIO_OSPEEDER_OSPEEDR12 | // 100MHz operations
+  GPIO_OSPEEDER_OSPEEDR13 |
+  GPIO_OSPEEDER_OSPEEDR14 |
+  GPIO_OSPEEDER_OSPEEDR15 );
+  GPIOD->PUPDR = 0; // No pull up , no pull down
+  //GPIOD->BSRR |= LED0;
   return;
 }

@@ -67,7 +67,7 @@ int send_char(int ch)
 int get_char(void)
 {
   while (!(USART2->SR & USART_SR_RXNE));
-  send_char(USART2->DR);
+  //send_char(USART2->DR);
   return ((int)(USART2->DR & 0xFF));
 }
 
@@ -181,8 +181,7 @@ int main()
     //GPIOD->BSRR = GPIO_BSRR_BR_12;
     //led_update(counter);
     while(1) {
-      if (I2C1->SR1 & I2C_SR1_TXE)
-        I2C1->DR |= 0x55;
+      send_char('U');
     }
     return 0;
 }
