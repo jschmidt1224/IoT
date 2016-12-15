@@ -11,7 +11,7 @@
 volatile uint32_t time_var1, time_var2;
 MP3FrameInfo mp3FrameInfo;
 HMP3Decoder hMP3Decoder;
-static char *string = "Hello USART!\r\n";
+static char *string = "Hello UART!\n\r";
 
 // Private function prototypes
 static void AudioCallback(void *context,int buffer);
@@ -20,11 +20,11 @@ void init();
 void init_clock();
 void init_uart();
 int send_char(int ch);
-uint8_t get_char();
+int get_char();
 
 // External variables
 #define MP3_SIZE	87323
-static uint8_t mp3_data[MP3_SIZE];
+char mp3_data[MP3_SIZE];
 
 // Some macros
 
@@ -42,16 +42,25 @@ int main(void) {
 	InitializeAudio(Audio44100HzSettings);
 	SetAudioVolume(0xCF);
 	//PlayAudioWithCallback(AudioCallback, 0);
-	while(*string) {
-		send_char(*string);
-		string++;
-	}
+	//GPIOD->BSRRL = 1<<12;
+	//for(;;) {
+		char* tmp = string;
+		while(*tmp) {
+			send_char(*tmp);
+			tmp++;
+		}
+
+	//}
 	for(b = 0; b < MP3_SIZE; b++)
 	{
 		mp3_data[b] = get_char();
 	}
 	GPIOD->BSRRL = 1<<12;
 	PlayAudioWithCallback(AudioCallback, 0);
+
+	while(1) {
+		
+	}
 
 	return 0;
 }
@@ -98,6 +107,7 @@ static void AudioCallback(void *context, int buffer) {
 
 	if (err) {
 		/* error occurred */
+		GPIOD->BSRRL = 1 << 15;
 		switch (err) {
 		case ERR_MP3_INDATA_UNDERFLOW:
 			outOfData = 1;
@@ -116,6 +126,7 @@ static void AudioCallback(void *context, int buffer) {
 	}
 
 	if (!outOfData) {
+		GPIOD->BSRRL = 1<<15;
 		ProvideAudioBuffer(samples, mp3FrameInfo.outputSamps);
 	}
 }
@@ -150,6 +161,9 @@ void init() {
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
 
+	//RCC_AHB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
+	//RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+
 	// IO
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
@@ -161,6 +175,18 @@ void init() {
 	GPIO_PinAFConfig(GPIOD, GPIO_PinSource5, GPIO_AF_USART1);
 	GPIO_PinAFConfig(GPIOD, GPIO_PinSource6, GPIO_AF_USART1);
 
+/*
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_11;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+	GPIO_PinAFConfig(GPIOC, GPIO_PinSource10, GPIO_AF_USART3);
+	GPIO_PinAFConfig(GPIOC, GPIO_PinSource11, GPIO_AF_USART3);
+*/
+
 	// Conf
 	USART_InitStructure.USART_BaudRate = 115200;
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
@@ -169,9 +195,11 @@ void init() {
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
 	USART_Init(USART2, &USART_InitStructure);
+	//USART_Init(USART3, &USART_InitStructure);
 
 	// Enable
-	USART_Cmd(USART2, ENABLE);
+	//USART_Cmd(USART2, ENABLE);
+	//USART_Cmd(USART3, ENABLE);
 }
 
 /*
@@ -233,30 +261,33 @@ void init_clock()
 void init_uart()
 {
   // make sure the relevant pins are appropriately set up.
-  GPIOA->AFR[0] |= (7 << 8) | (7 << 12);
-  RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
-  GPIOA->MODER &= ~(GPIO_MODER_MODER2) & ~(GPIO_MODER_MODER3);
-  GPIOA->MODER |= GPIO_MODER_MODER2_1 | GPIO_MODER_MODER3_1;
-  GPIOA->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR2 | GPIO_OSPEEDER_OSPEEDR3;
-  RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
-  USART2->BRR  = 42;
-  USART2->CR1 |= (USART_CR1_RE | USART_CR1_TE);
-  USART2->CR1 |= USART_CR1_UE;
+	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
+  GPIOB->AFR[1] |= (7 << 8) | (7 << 12);
+  GPIOB->MODER &= ~(GPIO_MODER_MODER10) & ~(GPIO_MODER_MODER11);
+  GPIOB->MODER |= GPIO_MODER_MODER10_1 | GPIO_MODER_MODER11_1;
+  GPIOB->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR10 | GPIO_OSPEEDER_OSPEEDR11;
+  RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
+  USART3->BRR  = 42;
+  USART3->CR1 |= (USART_CR1_RE | USART_CR1_TE);
+  USART3->CR1 |= USART_CR1_UE;
 }
 
 
 int send_char(int ch)
 {
-  while (!(USART2->SR & USART_SR_TXE));
-  USART2->DR = (ch & 0xFF);
+  while (!(USART3->SR & USART_SR_TXE));
+  USART3->DR = (ch & 0xFF);
   return (ch);
 }
 
-uint8_t get_char()
+int get_char()
 {
-  while (!(USART2->SR & USART_SR_RXNE));
+	//GPIOD->BSRRL = 1<<14;
+  while (!(USART3->SR & USART_SR_RXNE));
+	//GPIOD->BSRRL = 1<<13;
   //send_char(USART2->DR);
-  return ((uint8_t)(USART2->DR & 0xFF));
+	//GPIOD->BSRRL = 1<<12;
+  return ((int)(USART3->DR & 0xFF));
 }
 /*
  * Dummy function to avoid compiler error

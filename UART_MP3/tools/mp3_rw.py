@@ -26,7 +26,7 @@ ser = serial.Serial(
 
 # To Write to the device
 ser.write(first16bytes)
-print first16bytes
+#print first16bytes
 
 # To read from the virtual serial port port - for test
 print ser

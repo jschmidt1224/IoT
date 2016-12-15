@@ -67,7 +67,7 @@ int send_char(int ch)
 int get_char(void)
 {
   while (!(USART2->SR & USART_SR_RXNE));
-  //send_char(USART2->DR);
+  send_char(USART2->DR);
   return ((int)(USART2->DR & 0xFF));
 }
 
@@ -171,17 +171,17 @@ void spi_init()
 
 int main()
 {
-    led_init();
+    //led_init();
     clk_init();
     //led_init();
     button_init();
-    exti_init();
+    //exti_init();
     usart_init();
-    i2c_init();
+    //i2c_init();
     //GPIOD->BSRR = GPIO_BSRR_BR_12;
     //led_update(counter);
     while(1) {
-      send_char('U');
+      get_char();
     }
     return 0;
 }
