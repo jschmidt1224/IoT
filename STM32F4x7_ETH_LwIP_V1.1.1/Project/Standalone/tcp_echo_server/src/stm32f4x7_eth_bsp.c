@@ -247,11 +247,11 @@ void ETH_GPIO_Config(void)
   GPIO_PinAFConfig(GPIOC, GPIO_PinSource5, GPIO_AF_ETH);
 
   /* Configure PG11, PG14 and PG13 */
-  GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_11 | GPIO_Pin_13 | GPIO_Pin_14;
+  GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_11 | GPIO_Pin_13 | GPIO_Pin_12;
   GPIO_Init(GPIOG, &GPIO_InitStructure);
-  GPIO_PinAFConfig(GPIOG, GPIO_PinSource11, GPIO_AF_ETH);
-  GPIO_PinAFConfig(GPIOG, GPIO_PinSource13, GPIO_AF_ETH);
-  GPIO_PinAFConfig(GPIOG, GPIO_PinSource14, GPIO_AF_ETH);
+  GPIO_PinAFConfig(GPIOB, GPIO_PinSource11, GPIO_AF_ETH);
+  GPIO_PinAFConfig(GPIOB, GPIO_PinSource13, GPIO_AF_ETH);
+  GPIO_PinAFConfig(GPIOB, GPIO_PinSource12, GPIO_AF_ETH);
 
   /* Configure PH2, PH3, PH6, PH7 */
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_6 | GPIO_Pin_7;

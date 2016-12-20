@@ -15,6 +15,8 @@
 				<configuration artifactExtension="elf" artifactName="STM324x7I_EVAL" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="" id="com.atollic.truestudio.exe.debug.1518366166" name="Debug" parent="com.atollic.truestudio.exe.debug" postbuildStep="" prebuildStep="">
 					<folderInfo id="com.atollic.truestudio.exe.debug.1518366166." name="/" resourcePath="">
 						<toolChain id="com.atollic.truestudio.exe.debug.toolchain.683225115" name="Atollic ARM Tools" superClass="com.atollic.truestudio.exe.debug.toolchain">
+							<option id="com.atollic.truestudio.toolchain_options.mcu.89489975" superClass="com.atollic.truestudio.toolchain_options.mcu" value="STM32F437II" valueType="string"/>
+							<option id="com.atollic.truestudio.toolchain_options.vendor.2054940122" superClass="com.atollic.truestudio.toolchain_options.vendor" value="STMicroelectronics" valueType="string"/>
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="com.atollic.truestudio.exe.debug.toolchain.platform.2054752829" isAbstract="false" name="Debug platform" superClass="com.atollic.truestudio.exe.debug.toolchain.platform"/>
 							<builder buildPath="${workspace_loc:/STM32100B-EVAL/Debug}" id="com.atollic.truestudio.mbs.builder1.1222194476" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CDT Internal Builder" superClass="com.atollic.truestudio.mbs.builder1">
 								<outputEntries>
@@ -32,6 +34,7 @@
 								<option id="com.atollic.truestudio.as.general.otherflags.51384659" name="Other options" superClass="com.atollic.truestudio.as.general.otherflags" value="" valueType="string"/>
 								<option id="com.atollic.truestudio.as.general.warnings.1324541152" name="Suppress warnings" superClass="com.atollic.truestudio.as.general.warnings" value="true" valueType="boolean"/>
 								<option id="com.atollic.truestudio.common_options.target.fpu.829683864" name="Floating point" superClass="com.atollic.truestudio.common_options.target.fpu" value="com.atollic.truestudio.common_options.target.fpu.hard" valueType="enumerated"/>
+								<option id="com.atollic.truestudio.common_options.target.fpucore.2094977715" superClass="com.atollic.truestudio.common_options.target.fpucore" value="FPv4-SP-D16" valueType="enumerated"/>
 								<inputType id="com.atollic.truestudio.as.input.374932590" name="Input" superClass="com.atollic.truestudio.as.input"/>
 							</tool>
 							<tool command="arm-atollic-eabi-gcc -c " commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX} ${OUTPUT} ${INPUTS}" id="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447" name="C Compiler" superClass="com.atollic.truestudio.exe.debug.toolchain.gcc">
@@ -62,6 +65,7 @@
 								<option id="com.atollic.truestudio.gcc.optimization.prep_data.1044766448" name="Prepare dead data removal" superClass="com.atollic.truestudio.gcc.optimization.prep_data" value="true" valueType="boolean"/>
 								<option id="com.atollic.truestudio.exe.debug.toolchain.gcc.optimization.level.1763412676" name="Optimization Level" superClass="com.atollic.truestudio.exe.debug.toolchain.gcc.optimization.level" value="com.atollic.truestudio.gcc.optimization.level.0s" valueType="enumerated"/>
 								<option id="com.atollic.truestudio.common_options.target.fpu.829683864" name="Floating point" superClass="com.atollic.truestudio.common_options.target.fpu" value="com.atollic.truestudio.common_options.target.fpu.softfp" valueType="enumerated"/>
+								<option id="com.atollic.truestudio.common_options.target.fpucore.1936002617" superClass="com.atollic.truestudio.common_options.target.fpucore" value="FPv4-SP-D16" valueType="enumerated"/>
 								<inputType id="com.atollic.truestudio.gcc.input.850396938" superClass="com.atollic.truestudio.gcc.input"/>
 							</tool>
 							<tool id="com.atollic.truestudio.exe.debug.toolchain.ld.1444973427" name="C Linker" superClass="com.atollic.truestudio.exe.debug.toolchain.ld">
@@ -72,6 +76,7 @@
 								<option id="com.atollic.truestudio.ld.optimization.do_garbage.1816004776" name="Dead code removal" superClass="com.atollic.truestudio.ld.optimization.do_garbage" value="true" valueType="boolean"/>
 								<option id="com.atollic.truestudio.ld.libraries.list.848669414" name="Libraries" superClass="com.atollic.truestudio.ld.libraries.list"/>
 								<option id="com.atollic.truestudio.ld.libraries.searchpath.1273009461" name="Library search path" superClass="com.atollic.truestudio.ld.libraries.searchpath"/>
+								<option id="com.atollic.truestudio.common_options.target.fpucore.1914678158" superClass="com.atollic.truestudio.common_options.target.fpucore" value="FPv4-SP-D16" valueType="enumerated"/>
 								<inputType id="com.atollic.truestudio.ld.input.1372975870" name="Input" superClass="com.atollic.truestudio.ld.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -99,24 +104,12 @@
 								<option id="com.atollic.truestudio.common_options.target.fpu.829683864" name="Floating point" superClass="com.atollic.truestudio.common_options.target.fpu" value="com.atollic.truestudio.common_options.target.fpu.hard" valueType="enumerated"/>
 							</tool>
 							<tool id="com.atollic.truestudio.exe.debug.toolchain.secoutput.839033486" name="Other" superClass="com.atollic.truestudio.exe.debug.toolchain.secoutput"/>
+							<tool id="com.atollic.truestudio.ar.base.1999602888" name="Archiver" superClass="com.atollic.truestudio.ar.base"/>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="com.atollic.truestudio.exe.debug.1518366166.1564637265" name="TMPA900CMXBG_SDRAM.ld" rcbsApplicability="disable" resourcePath="TMPA900CMXBG_SDRAM.ld" toolsToInvoke=""/>
 					<fileInfo id="com.atollic.truestudio.exe.debug.1518366166.1322025465" name="LM3S101_FLASH.ld" rcbsApplicability="disable" resourcePath="LM3S101_FLASH.ld" toolsToInvoke=""/>
-					<fileInfo id="com.atollic.truestudio.exe.debug.1518366166.638608591" name="stm32f4x7_eth.c" rcbsApplicability="disable" resourcePath="STM32F4x7_ETH_Driver/stm32f4x7_eth.c" toolsToInvoke="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447.934614977">
-						<tool id="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447.934614977" name="C Compiler" superClass="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447">
-							<option id="com.atollic.truestudio.gcc.misc.otherflags.615953618" superClass="com.atollic.truestudio.gcc.misc.otherflags" value="-w" valueType="string"/>
-							<inputType id="com.atollic.truestudio.gcc.input.1188448184" superClass="com.atollic.truestudio.gcc.input"/>
-						</tool>
-					</fileInfo>
 					<fileInfo id="com.atollic.truestudio.exe.debug.1518366166.1609530475" name="MK10DX128xxx10_FLASH.ld" rcbsApplicability="disable" resourcePath="MK10DX128xxx10_FLASH.ld" toolsToInvoke=""/>
-					<fileInfo id="com.atollic.truestudio.exe.debug.1518366166.1870035126" name="STM32F105V8_FLASH.ld" rcbsApplicability="disable" resourcePath="STM32F105V8_FLASH.ld" toolsToInvoke="">
-						<tool customBuildStep="true" id="org.eclipse.cdt.managedbuilder.ui.rcbs.366966641" name="Resource Custom Build Step">
-							<inputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype.1279980137" name="Resource Custom Build Step Input Type">
-								<additionalInput kind="additionalinputdependency" paths=""/>
-							</inputType>
-							<outputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype.737601519" name="Resource Custom Build Step Output Type"/>
-						</tool>
-					</fileInfo>
 					<folderInfo id="com.atollic.truestudio.exe.debug.1518366166.1558785772" name="/" resourcePath="LwIP">
 						<toolChain id="com.atollic.truestudio.exe.debug.toolchain.1248536106" name="Atollic ARM Tools" superClass="com.atollic.truestudio.exe.debug.toolchain" unusedChildren="">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="com.atollic.truestudio.exe.debug.toolchain.platform" isAbstract="false" name="Debug platform" superClass="com.atollic.truestudio.exe.debug.toolchain.platform"/>
@@ -131,10 +124,24 @@
 							<tool id="com.atollic.truestudio.exe.debug.toolchain.gpp.1235048276" name="C++ Compiler" superClass="com.atollic.truestudio.exe.debug.toolchain.gpp.981298185"/>
 							<tool id="com.atollic.truestudio.exe.debug.toolchain.ldcc.1723216959" name="C++ Linker" superClass="com.atollic.truestudio.exe.debug.toolchain.ldcc.428260"/>
 							<tool id="com.atollic.truestudio.exe.debug.toolchain.secoutput.60098220" name="Other" superClass="com.atollic.truestudio.exe.debug.toolchain.secoutput.839033486"/>
+							<tool id="com.atollic.truestudio.ar.base.89728345" name="Archiver" superClass="com.atollic.truestudio.ar.base"/>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="com.atollic.truestudio.exe.debug.1518366166.638608591" name="stm32f4x7_eth.c" rcbsApplicability="disable" resourcePath="STM32F4x7_ETH_Driver/stm32f4x7_eth.c" toolsToInvoke="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447.934614977">
+						<tool id="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447.934614977" name="C Compiler" superClass="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447">
+							<option id="com.atollic.truestudio.gcc.misc.otherflags.615953618" superClass="com.atollic.truestudio.gcc.misc.otherflags" value="-w" valueType="string"/>
+							<inputType id="com.atollic.truestudio.gcc.input.1188448184" superClass="com.atollic.truestudio.gcc.input"/>
+						</tool>
+					</fileInfo>
+					<fileInfo id="com.atollic.truestudio.exe.debug.1518366166.1870035126" name="STM32F105V8_FLASH.ld" rcbsApplicability="disable" resourcePath="STM32F105V8_FLASH.ld" toolsToInvoke="">
+						<tool customBuildStep="true" id="org.eclipse.cdt.managedbuilder.ui.rcbs.366966641" name="Resource Custom Build Step">
+							<inputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype.1279980137" name="Resource Custom Build Step Input Type">
+								<additionalInput kind="additionalinputdependency" paths=""/>
+							</inputType>
+							<outputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype.737601519" name="Resource Custom Build Step Output Type"/>
+						</tool>
+					</fileInfo>
 					<fileInfo id="com.atollic.truestudio.exe.debug.1518366166.1822925594" name="MK30DN512xxx10_FLASH.ld" rcbsApplicability="disable" resourcePath="MK30DN512xxx10_FLASH.ld" toolsToInvoke=""/>
-					<fileInfo id="com.atollic.truestudio.exe.debug.1518366166.1564637265" name="TMPA900CMXBG_SDRAM.ld" rcbsApplicability="disable" resourcePath="TMPA900CMXBG_SDRAM.ld" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
@@ -193,4 +200,5 @@
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cproject>

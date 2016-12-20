@@ -57,6 +57,25 @@ void LCD_LED_Init(void);
 
 /* Private functions ---------------------------------------------------------*/
 
+void led_init()
+{
+  //Enables the clock going to the GPIO D peripheral
+  RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
+  //Sets GPIOD ports 12-15 to output
+  GPIOD->MODER &= ~(GPIO_MODER_MODER12) & ~(GPIO_MODER_MODER13);
+  GPIOD->MODER &= ~(GPIO_MODER_MODER14) & ~(GPIO_MODER_MODER15);
+  GPIOD->MODER |= GPIO_MODER_MODER12_0 | GPIO_MODER_MODER13_0;
+  GPIOD->MODER |= GPIO_MODER_MODER14_0 | GPIO_MODER_MODER15_0;
+
+  //Sets the speed of the GPIO to very high because why the fuck not
+  GPIOD->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR12 | GPIO_OSPEEDER_OSPEEDR13;
+  GPIOD->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR14 | GPIO_OSPEEDER_OSPEEDR15;
+
+  //Resetting all LEDs to ON
+  GPIOD->BSRR = GPIO_BSRR_BS_12 | GPIO_BSRR_BS_13;
+  GPIOD->BSRR = GPIO_BSRR_BS_14 | GPIO_BSRR_BS_15;
+}
+
 /**
   * @brief  Main program.
   * @param  None
@@ -72,6 +91,8 @@ int main(void)
      */
 
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
+  led_init();
+
 
 #ifdef SERIAL_DEBUG
   DebugComPort_Init();  
