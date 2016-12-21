@@ -232,6 +232,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/src/serial_debug.c</locationURI>
 		</link>
 		<link>
+			<name>User/stm32f4_discovery.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/src/stm32f4_discovery.c</locationURI>
+		</link>
+		<link>
 			<name>User/stm32f4x7_eth_bsp.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/src/stm32f4x7_eth_bsp.c</locationURI>
@@ -375,11 +380,6 @@
 			<name>LwIP/Netif/ethernetif.c</name>
 			<type>1</type>
 			<locationURI>PARENT-5-PROJECT_LOC/Utilities/Third_Party/lwip-1.4.1/port/STM32F4x7/Standalone/ethernetif.c</locationURI>
-		</link>
-		<link>
-			<name>STM32_EVAL/STM324x7I_EVAL/stm324x7i_eval.c</name>
-			<type>1</type>
-			<locationURI>PARENT-5-PROJECT_LOC/Utilities/STM32_EVAL/STM324x7I_EVAL/stm324x7i_eval.c</locationURI>
 		</link>
 		<link>
 			<name>STM32_EVAL/STM324x7I_EVAL/stm324x7i_eval_lcd.c</name>

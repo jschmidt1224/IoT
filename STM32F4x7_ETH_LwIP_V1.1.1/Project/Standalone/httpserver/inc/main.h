@@ -2,27 +2,21 @@
   ******************************************************************************
   * @file    main.h
   * @author  MCD Application Team
-  * @version V1.1.0
-  * @date    31-July-2013 
+  * @version V1.0.0
+  * @date    31-October-2011
   * @brief   This file contains all the functions prototypes for the main.c 
   *          file.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
+  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
+  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
+  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
+  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
+  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
   ******************************************************************************
   */
 
@@ -37,16 +31,17 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
 #include "stm32f4x7_eth_bsp.h"
+#include "stm32f4_discovery.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 
-#define USE_LCD        /* enable LCD  */
-//#define USE_DHCP       /* enable DHCP, if disabled static address is used */
+//#define USE_LCD        /* enable LCD  */
+#define USE_DHCP       /* enable DHCP, if disabled static address is used */
    
 /* Uncomment SERIAL_DEBUG to enables retarget of printf to serial port (COM1 on STM32 evalboard) 
    for debug purpose */   
-//#define SERIAL_DEBUG 
+#define SERIAL_DEBUG
 
  
 /* MAC ADDRESS: MAC_ADDR0:MAC_ADDR1:MAC_ADDR2:MAC_ADDR3:MAC_ADDR4:MAC_ADDR5 */
@@ -55,13 +50,13 @@
 #define MAC_ADDR2   0
 #define MAC_ADDR3   0
 #define MAC_ADDR4   0
-#define MAC_ADDR5   0
+#define MAC_ADDR5   1
  
 /*Static IP ADDRESS: IP_ADDR0.IP_ADDR1.IP_ADDR2.IP_ADDR3 */
 #define IP_ADDR0   192
 #define IP_ADDR1   168
 #define IP_ADDR2   0
-#define IP_ADDR3   10
+#define IP_ADDR3   111
    
 /*NETMASK*/
 #define NETMASK_ADDR0   255
@@ -76,7 +71,7 @@
 #define GW_ADDR3   1
 
 /* MII and RMII mode selection, for STM324xG-EVAL Board(MB786) RevB ***********/
-//#define RMII_MODE  // User have to provide the 50 MHz clock by soldering a 50 MHz
+#define RMII_MODE  // User have to provide the 50 MHz clock by soldering a 50 MHz
                      // oscillator (ref SM7745HEV-50.0M or equivalent) on the U3
                      // footprint located under CN3 and also removing jumper on JP5. 
                      // This oscillator is not provided with the board. 
@@ -84,7 +79,7 @@
                      // board User manual (UM1461).
 
                                      
-#define MII_MODE
+//#define MII_MODE
 
 /* Uncomment the define below to clock the PHY from external 25MHz crystal (only for MII mode) */
 #ifdef 	MII_MODE
@@ -106,7 +101,7 @@
    
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-void Time_Update(void);  
+void Time_Update(void);
 void Delay(uint32_t nCount);
 
 
@@ -117,5 +112,5 @@ void Delay(uint32_t nCount);
 #endif /* __MAIN_H */
 
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
 

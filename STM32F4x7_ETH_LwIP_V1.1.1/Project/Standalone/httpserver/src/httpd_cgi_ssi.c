@@ -155,8 +155,8 @@ const char * LEDS_CGI_Handler(int iIndex, int iNumParams, char *pcParam[], char 
   if (iIndex==0)
   {
     /* All leds off */
-    STM_EVAL_LEDOff(LED1);
-    STM_EVAL_LEDOff(LED2);
+    STM_EVAL_LEDOff(LED5);
+    STM_EVAL_LEDOff(LED6);
     STM_EVAL_LEDOff(LED3);
     STM_EVAL_LEDOff(LED4);
     
@@ -168,11 +168,11 @@ const char * LEDS_CGI_Handler(int iIndex, int iNumParams, char *pcParam[], char 
       {
         /* switch led1 ON if 1 */
         if(strcmp(pcValue[i], "1") ==0) 
-          STM_EVAL_LEDOn(LED1);
+          STM_EVAL_LEDOn(LED5);
           
         /* switch led2 ON if 2 */
         else if(strcmp(pcValue[i], "2") ==0) 
-          STM_EVAL_LEDOn(LED2);
+          STM_EVAL_LEDOn(LED6);
         
         /* switch led3 ON if 3 */
         else if(strcmp(pcValue[i], "3") ==0) 

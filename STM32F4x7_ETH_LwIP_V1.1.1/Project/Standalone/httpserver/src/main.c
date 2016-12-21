@@ -2,26 +2,20 @@
   ******************************************************************************
   * @file    main.c
   * @author  MCD Application Team
-  * @version V1.1.0
-  * @date    31-July-2013
+  * @version V1.0.0
+  * @date    31-October-2011
   * @brief   Main program body
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
+  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
+  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
+  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
+  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
+  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
   ******************************************************************************
   */
 
@@ -31,17 +25,14 @@
 #include "main.h"
 #include "httpd.h"
 #include "serial_debug.h"
+//#include "stm32f4_discovery.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 #define SYSTEMTICK_PERIOD_MS  10
 
 /*--------------- LCD Messages ---------------*/
-#if defined (STM32F40XX)
-#define MESSAGE1   "    STM32F40/41x     "
-#elif defined (STM32F427X)
-#define MESSAGE1   "     STM32F427x      "
-#endif
+#define MESSAGE1   "     STM32F4x7      "
 #define MESSAGE2   "  STM32F-4 Series   "
 #define MESSAGE3   "   Webserver Demo   "
 #define MESSAGE4   "                    "
@@ -61,44 +52,48 @@ void LCD_LED_Init(void);
   * @param  None
   * @retval None
   */
+RCC_ClocksTypeDef RCC_Clocks;
 int main(void)
 {
-  /*!< At this stage the microcontroller clock setting is already configured to 
+  /*!< At this stage the microcontroller clock setting is already configured to
        168 MHz, this is done through SystemInit() function which is called from
        startup file (startup_stm32f4xx.s) before to branch to application main.
        To reconfigure the default setting of SystemInit() function, refer to
        system_stm32f4xx.c file
      */
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
+
+	RCC_GetClocksFreq(&RCC_Clocks);
 
 #ifdef SERIAL_DEBUG
   DebugComPort_Init();
+  printf("STM32DISCOVERY is booting...\r\n");
 #endif
 
-  /*Initialize LCD and Leds */ 
+  /*Initialize LCD and Leds */
   LCD_LED_Init();
 
   /* configure ethernet (GPIOs, clocks, MAC, DMA) */
   ETH_BSP_Config();
- 
+
   /* Initilaize the LwIP stack */
   LwIP_Init();
-  
+
   /* Http webserver Init */
   httpd_init();
 
   /* Infinite loop */
   while (1)
-  {  
+  {
     /* check if any packet received */
     if (ETH_CheckFrameReceived())
-    { 
+    {
       /* process received ethernet packet */
       LwIP_Pkt_Handle();
     }
     /* handle periodic timers for LwIP */
     LwIP_Periodic_Handle(LocalTime);
-  } 
+  }
+  return 0;
 }
 
 /**
@@ -109,11 +104,11 @@ int main(void)
 void Delay(uint32_t nCount)
 {
   /* Capture the current local time */
-  timingdelay = LocalTime + nCount;  
+  timingdelay = LocalTime + nCount;
 
   /* wait until the desired delay finish */
   while(timingdelay > LocalTime)
-  {     
+  {
   }
 }
 
@@ -128,7 +123,7 @@ void Time_Update(void)
 }
 
 /**
-  * @brief  Initializes the STM324xG-EVAL's LCD and LEDs resources
+  * @brief  Initializes the STM324xG-EVAL's LCD and LEDs resources.
   * @param  None
   * @retval None
   */
@@ -140,11 +135,11 @@ void LCD_LED_Init(void)
 #endif
 
   /* Initialize STM324xG-EVAL's LEDs */
-  STM_EVAL_LEDInit(LED1);
-  STM_EVAL_LEDInit(LED2);
+  STM_EVAL_LEDInit(LED5);
+  STM_EVAL_LEDInit(LED6);
   STM_EVAL_LEDInit(LED3);
   STM_EVAL_LEDInit(LED4);
-  
+
 #ifdef USE_LCD
   /* Clear the LCD */
   LCD_Clear(Black);
@@ -159,7 +154,7 @@ void LCD_LED_Init(void)
   LCD_DisplayStringLine(Line0, (uint8_t*)MESSAGE1);
   LCD_DisplayStringLine(Line1, (uint8_t*)MESSAGE2);
   LCD_DisplayStringLine(Line2, (uint8_t*)MESSAGE3);
-  LCD_DisplayStringLine(Line3, (uint8_t*)MESSAGE4);  
+  LCD_DisplayStringLine(Line3, (uint8_t*)MESSAGE4);
 #endif
 }
 
@@ -184,4 +179,4 @@ void assert_failed(uint8_t* file, uint32_t line)
 #endif
 
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
